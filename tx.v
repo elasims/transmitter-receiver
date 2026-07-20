@@ -28,7 +28,7 @@ module transmitter (
     input clk,
     input reset
     );
-    parameter CLK_FREQ = 50000000;
+    parameter CLK_FREQ = 125000000;
     parameter BAUD_RATE = 115200;
     localparam BAUD_TICK = CLK_FREQ / BAUD_RATE;
     
@@ -37,7 +37,7 @@ module transmitter (
     localparam p_data  = 2'd2;
     localparam p_stop  = 2'd3;
     
-    reg [1:0] reg_state;
+     reg [1:0] reg_state;
     reg [15:0] reg_baudcnt;
     reg [2:0] reg_bitcnt;
     reg [7:0] reg_shift;
@@ -54,7 +54,7 @@ module transmitter (
         else begin
         case (reg_state)
             p_idle: begin
-                tx <= 1'b0;
+                tx <= 1'b1;
                 busy <= 1'b0;
                 reg_baudcnt <= 0;
                 reg_bitcnt <= 0;
@@ -65,7 +65,7 @@ module transmitter (
                 end
             end
             p_start: begin
-                tx <= 1;
+                tx <= 0;
                 if (reg_baudcnt == BAUD_TICK-1) begin
                     reg_baudcnt <= 0;
                     reg_state <= p_data;
@@ -93,7 +93,7 @@ module transmitter (
                 end
             end
             p_stop: begin
-                tx <= 0;
+                tx <= 1;
                 if (reg_baudcnt == BAUD_TICK-1)
                 begin
                   reg_baudcnt <= 0;
