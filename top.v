@@ -27,7 +27,7 @@ module top(
     output tx,
     output [3:0] led
     );
-    localparam CLK_FREQ = 50000000;
+    localparam CLK_FREQ = 125000000;
     localparam BAUD_RATE = 115200;
     
     wire tx_busy;
@@ -36,8 +36,6 @@ module top(
     wire tx_line;
     wire fram_err;
     wire [7:0] rx_data;
-    reg [7:0] reg_echo;
-    reg start;
     reg [3:0] counter;
     
     assign tx = tx_line;
@@ -70,4 +68,5 @@ always @(posedge clk) begin
     end
   end
 end
+
 endmodule
