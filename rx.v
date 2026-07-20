@@ -29,7 +29,7 @@ module receiver(
     input reset,
     output reg busy
     );
-    parameter CLK_FREQ = 50000000;
+    parameter CLK_FREQ = 125000000;
     parameter BAUD_RATE = 115200;
     localparam BAUD_TICK = CLK_FREQ / BAUD_RATE;
     localparam HALF_TICK = BAUD_TICK / 2;
@@ -63,7 +63,7 @@ module receiver(
                     busy <= 0;
                     reg_baudcnt <= 0;
                     reg_bitcnt <= 0;
-                    reg_state <= rx ? p_start : p_idle;
+                    reg_state <= (~rx) ? p_start : p_idle;
 
                 end
                 p_start: begin
@@ -94,7 +94,7 @@ module receiver(
                 p_stop: begin
                     if (bauddone) begin
                         reg_baudcnt <= 0;
-                        if (~rx) begin
+                        if (rx) begin
                             data <= reg_shift;
                             datavld <= 1;
                         end
@@ -106,14 +106,14 @@ module receiver(
                         reg_baudcnt <= reg_baudcnt + 1;
                     end
                 if (bauddone) begin
-                    reg_state <= rx ? p_wait : p_idle;
+                    reg_state <= (~rx) ? p_wait : p_idle;
                 end else begin
                     reg_state <= p_stop;
                 end
                 end
                 p_wait: begin
                     busy <= 1;
-                    reg_state <= (~rx) ? p_idle : p_wait;
+                    reg_state <= rx ? p_idle : p_wait;
                 end
                 default: reg_state <= p_idle;
             endcase
